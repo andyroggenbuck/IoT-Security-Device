@@ -19,7 +19,7 @@ The devices I designed are an Alarm Module and a Weather Sensor Module -- both a
 <i>This device reads pressure, temperature, and humidity values from a sensor via I2C and reports them to the host at regular intervals.</i></p>  
 
 ## Developing USB Device Application Code
-I could see that writing my own USB driver code would be daunting, and I wasn't confident I'd complete it by the end of the semester, so I started looking for existing drivers I could use with the SAM D microcontroller. I found a helpful starting point for developing the project in [this](https://microchipdeveloper.com/harmony3:usb-getting-started-training-module) example project from Microchip, which uses the USB driver stack in the MPLAB Harmony V3 framework.
+I could see that writing USB driver code from scratch would be daunting, and I wasn't confident I'd complete it by the end of the semester, so I started looking for existing drivers I could use with the SAM D microcontroller. I found a helpful starting point for developing the project in [this](https://microchipdeveloper.com/harmony3:usb-getting-started-training-module) example project from Microchip, which uses the USB driver stack in the MPLAB Harmony V3 framework.
 
 I needed to adapt the code to run on the Trinket M0 instead of the evaluation kit used in the example. This required me to make two changes in the Harmony 3 Configurator:
 
@@ -28,8 +28,8 @@ I needed to adapt the code to run on the Trinket M0 instead of the evaluation ki
   - This seems obvious in retrospect, but it wasn't mentioned in Microchip's project tutorial and it took me a minute to realize the pins weren't assigned already.
 
 - Change the Bulk IN endpoint address in the CDC Function Driver from 3 to 2.
-  - Once enumerated, the device would schedule a USB read and then get hung up waiting for it to complete. I traced the program's execution using breakpoints and found that the endpoint address was being rejected as invalid when passed to a function in the USB driver.
-  - Datasheets confirmed the USB endpoints are numbered differently in the Trinket M0's ATSAMD21E18A than they are in the ATSAME70Q21 used in the example project I was working from.
+  - The device would schedule a USB read and then get hung up waiting for it to complete. I traced the program's execution using breakpoints and found that the endpoint address was being rejected as invalid when passed to a function in the USB driver.
+  - Datasheets confirmed the USB endpoints are numbered differently in the Trinket M0's ATSAMD21E18A than they are in the ATSAME70Q21 used in the example project I was working from. Changing the Bulk IN endpoint number fixed the problem.
 
 These two fixes established successful USB serial communication, which I used as the foundation for developing the applications used in the [Alarm Module](https://github.com/andyroggenbuck/USB-Alarm-Module) and [Weather Sensor Module](https://github.com/andyroggenbuck/USB-Weather-Sensor-Module).
 
